@@ -213,7 +213,9 @@ public class MenuButtonList : MonoBehaviour
         {
             _selectedButton = ButtonSelected.OnClickGameStart;
             _MenuSFX.PlayButtonClickSFX();
-            ButtonCheckImage.transform.localPosition = new Vector3(0.0f, -370.0f, 0.0f);
+            // ButtonCheckImage.transform.localPosition = new Vector3(0.0f, -370.0f, 0.0f);
+            ButtonCheckImage.GetComponent<RectTransform>().pivot = _gameStart.GetComponent<RectTransform>().pivot;
+            ButtonCheckImage.transform.localPosition = new Vector3(_gameStart.transform.localPosition.x, _gameStart.transform.localPosition.y - 40, _gameStart.transform.localPosition.z);
             ButtonCheckImage.SetActive(true);
         }
     }
@@ -288,6 +290,8 @@ public class MenuButtonList : MonoBehaviour
         else
         {
             _selectedButton = ButtonSelected.OnClickExit;
+            ButtonCheckImage.GetComponent<RectTransform>().pivot =
+                GameObject.Find("GameExit").GetComponent<RectTransform>().pivot;
             ButtonCheckImage.transform.position = GameObject.Find("GameExit").transform.position;
             ButtonCheckImage.SetActive(true);
             _MenuSFX.PlayButtonClickSFX();
@@ -305,6 +309,8 @@ public class MenuButtonList : MonoBehaviour
         else
         {
             _selectedButton = ButtonSelected.OnClickCredit;
+            ButtonCheckImage.GetComponent<RectTransform>().pivot =
+                GameObject.Find("Credit").GetComponent<RectTransform>().pivot;
             ButtonCheckImage.transform.position = GameObject.Find("Credit").transform.position;
             ButtonCheckImage.SetActive(true);
             _MenuSFX.PlayButtonClickSFX();

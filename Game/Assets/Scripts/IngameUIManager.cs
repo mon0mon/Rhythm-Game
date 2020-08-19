@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -157,6 +158,18 @@ public class IngameUIManager : MonoBehaviour
         _blackScreen.enabled = true;
         _endScene.SetActive(true);
 
+        if (Mathf.Approximately(Camera.main.aspect, 2.111111f))
+        {
+        } else if (Mathf.Approximately(Camera.main.aspect, 1.777777f))
+        {
+            _endScene.transform.Find("Text").GetComponent<RectTransform>().offsetMin = new Vector2(230f, 384f);
+            _endScene.transform.Find("Text").GetComponent<RectTransform>().offsetMax = new Vector2(-1359f, -44f);
+        } else if (Mathf.Approximately(Camera.main.aspect, 1.6f))
+        {
+            _endScene.transform.Find("Text").GetComponent<RectTransform>().offsetMin = new Vector2(223f, 366f);
+            _endScene.transform.Find("Text").GetComponent<RectTransform>().offsetMax = new Vector2(-1379f, -62f);
+        }
+
         switch (ActiveScene)
         {
             case SceneList.StoneAge :
@@ -226,10 +239,11 @@ public class IngameUIManager : MonoBehaviour
             _GM.GameUnPause();
         }
 
+        _selectedButton = ButtonSelected.NULL;
         _textEffect.ToggleStatusTextEffect();
         isConfigOn = !isConfigOn;
     }
-
+    
     public void RestartLevel()
     {
         if (!btnTriggerOn)
@@ -282,6 +296,87 @@ public class IngameUIManager : MonoBehaviour
             {
                 _selectedButton = ButtonSelected.OnClickMainMenu;
                 ButtonCheckImage.transform.position = GameObject.Find("ToMainMenu").transform.position;
+                ButtonCheckImage.SetActive(true);
+                _MenuSFX.PlayButtonClickSFX();
+            }
+        }
+    }
+
+    public void RestartLevelEnd()
+    {
+        if (!btnTriggerOn)
+        {
+            if (_selectedButton == ButtonSelected.OnClickRestart)
+            {
+                Debug.Log("Restart");
+                
+                // 디버깅용 시간 초기화
+                _GM.TimeScale = 1f;
+                _ingameMusic.AudioMixer.SetFloat("BGM_Speed", 1f);
+                _SFX.AudioMixer.SetFloat("SFX_Speed", 1f);
+                
+                _GM.NextScene = SceneList.StoneAge;
+                _GM.EnableLoadingScreen = false;
+                _GM.MoveNextScene();
+                btnTriggerOn = true;
+                _MenuSFX.PlayLoadingSFX();
+            } 
+            else
+            {
+                _selectedButton = ButtonSelected.OnClickRestart;
+                // ButtonCheckImage.transform.position = GameObject.Find("Restart").transform.position;
+                Transform tf = GameObject.Find("Restart").transform;
+                ButtonCheckImage.transform.localPosition = tf.localPosition;
+                if (Mathf.Approximately(Camera.main.aspect, 2.111111f))
+                {
+                    ButtonCheckImage.transform.localPosition = new Vector3(tf.localPosition.x, -440f, tf.localPosition.z);
+                } else if (Mathf.Approximately(Camera.main.aspect, 1.777777f))
+                {
+                    ButtonCheckImage.transform.localPosition = new Vector3(708f, -440f, tf.localPosition.z);
+                } else if (Mathf.Approximately(Camera.main.aspect, 1.6f))
+                {
+                    ButtonCheckImage.transform.localPosition = new Vector3(708f, -488f, tf.localPosition.z);
+                }
+                ButtonCheckImage.SetActive(true);
+                _MenuSFX.PlayButtonClickSFX();
+            }
+        }
+    }
+
+    public void RetrunToMainMenuEnd()
+    {
+        if (!btnTriggerOn)
+        {
+            if (_selectedButton == ButtonSelected.OnClickMainMenu)
+            {
+                Debug.Log("Restart");
+                
+                // 디버깅용 시간 초기화
+                _GM.TimeScale = 1f;
+                _ingameMusic.AudioMixer.SetFloat("BGM_Speed", 1f);
+                _SFX.AudioMixer.SetFloat("SFX_Speed", 1f);
+                
+                _GM.NextScene = SceneList.Main_Scene;
+                _GM.EnableLoadingScreen = false;
+                _GM.MoveNextScene();
+                btnTriggerOn = true;
+                _MenuSFX.PlayLoadingSFX();
+            } 
+            else
+            {
+                _selectedButton = ButtonSelected.OnClickMainMenu;
+                // ButtonCheckImage.transform.position = GameObject.Find("ToMainMenu").transform.position;
+                Transform tf = GameObject.Find("ToMainMenu").transform;
+                if (Mathf.Approximately(Camera.main.aspect, 2.111111f))
+                {
+                    ButtonCheckImage.transform.localPosition = new Vector3(tf.localPosition.x, -440f, tf.localPosition.z);
+                } else if (Mathf.Approximately(Camera.main.aspect, 1.777777f))
+                {
+                    ButtonCheckImage.transform.localPosition = new Vector3(374, -440f, tf.localPosition.z);
+                } else if (Mathf.Approximately(Camera.main.aspect, 1.6f))
+                {
+                    ButtonCheckImage.transform.localPosition = new Vector3(374, -488f, tf.localPosition.z);
+                }
                 ButtonCheckImage.SetActive(true);
                 _MenuSFX.PlayButtonClickSFX();
             }
