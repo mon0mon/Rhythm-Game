@@ -149,6 +149,7 @@ public class MenuButtonList : MonoBehaviour
             SelectedScene = SceneList.StoneAge;
             ChangeButtonSprite();
             _MenuSFX.PlayButtonClickSFX();
+            GameObject.Find("Game_Start").GetComponent<Button>().interactable = true;
         }
     }
     
@@ -161,6 +162,7 @@ public class MenuButtonList : MonoBehaviour
             SelectedScene = SceneList.MiddleAge;
             ChangeButtonSprite();
             _MenuSFX.PlayButtonClickSFX();
+            GameObject.Find("Game_Start").GetComponent<Button>().interactable = true;
         }
     }
     
@@ -173,6 +175,7 @@ public class MenuButtonList : MonoBehaviour
             SelectedScene = SceneList.ModernAge;
             ChangeButtonSprite();
             _MenuSFX.PlayButtonClickSFX();
+            GameObject.Find("Game_Start").GetComponent<Button>().interactable = true;
         }
     }
     
@@ -185,6 +188,7 @@ public class MenuButtonList : MonoBehaviour
             SelectedScene = SceneList.SciFi;
             ChangeButtonSprite();
             _MenuSFX.PlayButtonClickSFX();
+            GameObject.Find("Game_Start").GetComponent<Button>().interactable = true;
         }
     }
 
@@ -249,6 +253,7 @@ public class MenuButtonList : MonoBehaviour
             ActiveButtons();
             ButtonCheckImage.SetActive(false);
             _selectedButton = ButtonSelected.NULL;
+            GameObject.Find("Game_Start").GetComponent<Button>().interactable = false;
         }
         isConfigOn = !isConfigOn;
     }

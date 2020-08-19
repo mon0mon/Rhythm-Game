@@ -74,9 +74,10 @@ public class GameManager : MonoBehaviour
             DestroyImmediate(gameObject);
             return;
         }
+
         // DontDestroyOnLoad(gameObject);
         instance = this;
-        
+
         // 변수 초기화
         ResetVariables();
 
@@ -91,10 +92,33 @@ public class GameManager : MonoBehaviour
         _ingameAnimManager = gameObject.GetComponent<Ingame_Charactor_Animation_Manager>();
 
         _sceneData.ClearSceneInfo();
+        // Debuging Option
         SetTimeScale();
-        
+
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
+
+        if (Stage == SceneList.NULL)
+        {
+            switch (SceneManager.GetActiveScene().name)
+            {
+                case "Stage_StoneAge":
+                    Stage = SceneList.StoneAge;
+                    break;
+                case "Stage_MiddleAge":
+                    Stage = SceneList.MiddleAge;
+                    break;
+                case "Stage_ModernAge":
+                    Stage = SceneList.ModernAge;
+                    break;
+                case "Stage_SciFiAge":
+                    Stage = SceneList.SciFi;
+                    break;
+                default:
+                    Debug.Log("GameManager : Unexepceted ActiveScene Name");
+                    break;
+            }
+        }
     }
 
     private void Update()
@@ -107,26 +131,37 @@ public class GameManager : MonoBehaviour
             // 음악 메소드인 IngameMusicManager 호출로 변경
             _ingameMusic.PlayBGM();
         }
-        
-        // 점수가 맥스를 넘겼을 경우 보스 사망 애니메이션 출력
-        if (score >= 200)
+
+        switch (Stage)
         {
-            _ingameAnimManager.GetAction(AnimState.BossDie);
+            case SceneList.StoneAge :
+                // 점수가 맥스를 넘겼을 경우 보스 사망 애니메이션 출력
+                if (score >= 200)
+                {
+                    _ingameAnimManager.GetAction(AnimState.BossDie);
+                }
+                
+                // 인게임 체력바가 0 밑으로 떨어질 경우 게임 오버
+                if (score <= 0 && !gameEndTrigger)
+                {
+                    CheckHitNotes();
+                    _ingameMusic.StopBGM();
+                    GameObject.Find("NoteHolder").GetComponent<BeatScroller>().SetStop(true);
+                    gameEndTrigger = true;
+                }
+                break;
+            case SceneList.MiddleAge :
+                break;
+            case SceneList.ModernAge :
+                break;
+            case SceneList.SciFi :
+                break;
         }
 
         // 음악이 끝났을 경우 종료 화면 출력
         if (!_ingameMusic.AudioSource.isPlaying && !gameEndTrigger && _ingameMusic.CheckTrigger())
         {
             CheckHitNotes();
-            gameEndTrigger = true;
-        }
-
-        // 인게임 체력바가 0 밑으로 떨어질 경우 게임 오버
-        if (score <= 0 && !gameEndTrigger)
-        {
-            CheckHitNotes();
-            _ingameMusic.StopBGM();
-            GameObject.Find("NoteHolder").GetComponent<BeatScroller>().SetStop(true);
             gameEndTrigger = true;
         }
     }
@@ -137,32 +172,43 @@ public class GameManager : MonoBehaviour
         // 게임을 플레이 하고 있을 경우에만 카운트
         if (!isNotPlaying && PressedButton != null && !isConfigOn)
         {
-            switch (type)
+            switch (Stage)
             {
-                case TouchInputType.Tab :
-                    Debug.Log("Hit on Time");
-                    _ingameAnimManager.GetAction(AnimState.PlayerAttack);
-                    _ingameSFX.PlayStoneAgeSFX(StoneAge_SFX.Babarian_Attack);
-                    _ingameSFX.PlayStoneAgeSFX(StoneAge_SFX.Mammoth_Damaged);
-                    hitCount++;
-                    score += AddScoreAmount;
-                    _ingameUI.OnBossHPChageListener();
-                    // 텍스트 효과 출력
-                    if (_textEffect.TextEffect == TextEffectEnable.Enable)
-                        StartCoroutine(PrintText(TextEffectDelayFrame, TextPrintType.Hit,
-                            PressedButton.GetComponent<ButtonController>()));
-                    // PressedButton.GetComponent<ButtonController>().SelectTextType();
+                case SceneList.StoneAge :
+                    switch (type)
+                    {
+                        case TouchInputType.Tab :
+                            Debug.Log("Hit on Time");
+                            _ingameAnimManager.GetAction(AnimState.PlayerAttack);
+                            _ingameSFX.PlayStoneAgeSFX(StoneAge_SFX.Babarian_Attack);
+                            _ingameSFX.PlayStoneAgeSFX(StoneAge_SFX.Mammoth_Damaged);
+                            hitCount++;
+                            score += AddScoreAmount;
+                            _ingameUI.OnBossHPChageListener();
+                            // 텍스트 효과 출력
+                            if (_textEffect.TextEffect == TextEffectEnable.Enable)
+                                StartCoroutine(PrintText(TextEffectDelayFrame, TextPrintType.Hit,
+                                    PressedButton.GetComponent<ButtonController>()));
+                            // PressedButton.GetComponent<ButtonController>().SelectTextType();
+                            break;
+                        case TouchInputType.Swipe :
+                            _ingameAnimManager.GetAction(AnimState.PlayerDodge);
+                            _ingameSFX.PlayStoneAgeSFX(StoneAge_SFX.Babarian_Dodge);
+                            Debug.Log("Dodge On Time");
+                            dodgeCount++;
+                            // 텍스트 효과 출력
+                            if (_textEffect.TextEffect == TextEffectEnable.Enable)
+                                StartCoroutine(PrintText(TextEffectDelayFrame, TextPrintType.Dodge,
+                                    PressedButton.GetComponent<ButtonController>()));
+                            // PressedButton.GetComponent<ButtonController>().SelectTextType();
+                            break;
+                    }
                     break;
-                case TouchInputType.Swipe :
-                    _ingameAnimManager.GetAction(AnimState.PlayerDodge);
-                    _ingameSFX.PlayStoneAgeSFX(StoneAge_SFX.Babarian_Dodge);
-                    Debug.Log("Dodge On Time");
-                    dodgeCount++;
-                    // 텍스트 효과 출력
-                    if (_textEffect.TextEffect == TextEffectEnable.Enable)
-                        StartCoroutine(PrintText(TextEffectDelayFrame, TextPrintType.Dodge,
-                            PressedButton.GetComponent<ButtonController>()));
-                    // PressedButton.GetComponent<ButtonController>().SelectTextType();
+                case SceneList.MiddleAge :
+                    break;
+                case SceneList.ModernAge :
+                    break;
+                case SceneList.SciFi :
                     break;
             }
         }
@@ -174,33 +220,44 @@ public class GameManager : MonoBehaviour
         // 게임을 플레이 하고 있을 경우에만 호출
         if (!isNotPlaying)
         {
-            switch (inputType)
+            switch (Stage)
             {
-                case TouchInputType.Tab :
-                    // 미스를 출력
-                    _ingameAnimManager.GetAction(AnimState.PlayerMiss);
-                    // 텍스트 효과 출력
-                    if (_textEffect.TextEffect == TextEffectEnable.Enable)
-                        StartCoroutine(PrintText(TextEffectDelayFrame, TextPrintType.Miss,
-                            PressedButton.GetComponent<ButtonController>()));
-                    // PressedButton.GetComponent<ButtonController>().SelectTextType(TextPrintType.Miss);
-                    missCount++;
+                case SceneList.StoneAge :
+                    switch (inputType)
+                    {
+                        case TouchInputType.Tab :
+                            // 미스를 출력
+                            _ingameAnimManager.GetAction(AnimState.PlayerMiss);
+                            // 텍스트 효과 출력
+                            if (_textEffect.TextEffect == TextEffectEnable.Enable)
+                                StartCoroutine(PrintText(TextEffectDelayFrame, TextPrintType.Miss,
+                                    PressedButton.GetComponent<ButtonController>()));
+                            // PressedButton.GetComponent<ButtonController>().SelectTextType(TextPrintType.Miss);
+                            missCount++;
+                            break;
+                        case TouchInputType.Swipe :
+                            // 플레이어 피격 모션 출력
+                            _ingameAnimManager.GetAction(AnimState.PlayerDamaged);
+                            _ingameSFX.PlayStoneAgeSFX(StoneAge_SFX.Mammoth_Attack);
+                            // 데미지를 출력
+                            score -= (AddScoreAmount * DodgeFailPenaltyMul);
+                            _ingameUI.OnBossHPChageListener();
+                            badCount++;
+                            // 텍스트 효과 출력
+                            if (_textEffect.TextEffect == TextEffectEnable.Enable)
+                                StartCoroutine(PrintText(TextEffectDelayFrame, TextPrintType.Damaged,
+                                    PressedButton.GetComponent<ButtonController>()));
+                            // PressedButton.GetComponent<ButtonController>().SelectTextType(TextPrintType.Damaged);
+                            break;
+                        case TouchInputType.NULL :
+                            break;
+                    }
                     break;
-                case TouchInputType.Swipe :
-                    // 플레이어 피격 모션 출력
-                    _ingameAnimManager.GetAction(AnimState.PlayerDamaged);
-                    _ingameSFX.PlayStoneAgeSFX(StoneAge_SFX.Mammoth_Attack);
-                    // 데미지를 출력
-                    score -= (AddScoreAmount * DodgeFailPenaltyMul);
-                    _ingameUI.OnBossHPChageListener();
-                    badCount++;
-                    // 텍스트 효과 출력
-                    if (_textEffect.TextEffect == TextEffectEnable.Enable)
-                        StartCoroutine(PrintText(TextEffectDelayFrame, TextPrintType.Damaged,
-                            PressedButton.GetComponent<ButtonController>()));
-                    // PressedButton.GetComponent<ButtonController>().SelectTextType(TextPrintType.Damaged);
+                case SceneList.MiddleAge :
                     break;
-                case TouchInputType.NULL :
+                case SceneList.ModernAge :
+                    break;
+                case SceneList.SciFi :
                     break;
             }
         }
@@ -209,48 +266,59 @@ public class GameManager : MonoBehaviour
     // 일정 수 이상 노트를 적중 했을 경우 동작하는 메소드
     public void CheckHitNotes()
     {
-        String str = null;
-        ResultState state = ResultState.NULL;
-        float cntClear = (float)Math.Round(score / maxScore * 100);
+        switch (Stage)
+        {
+            case SceneList.StoneAge :
+                String str = null;
+                ResultState state = ResultState.NULL;
+                float cntClear = (float)Math.Round(score / maxScore * 100);
 
-        if (score <= 0) score = 0;
+                if (score <= 0) score = 0;
         
-        // 맘모스와 원시인 그로기 상태 확정되면 그때 추가하기
-        // 클리어 퍼센트에 따른 엔딩 분기 조절
-        if (cntClear >= 100)
-        {
-            state = ResultState.BossDead;
-            str = "Boss Dead";
-            Debug.Log("Boss Dead");
-        } else if (85 <= cntClear && cntClear < 100)
-        {
-            state = ResultState.BossGroggy;
-            str = "Boss Groggy";
-            Debug.Log("Boss Groggy");
-        } else if (50 <= cntClear && cntClear < 85)
-        {
-            state = ResultState.BossRun;
-            str = "Boss Run";
-            Debug.Log("Boss Run");
-        } else if (0 < cntClear && cntClear < 50)
-        {
-            state = ResultState.PlayerRun;
-            str = "Player Run";
-            Debug.Log("Player Run");
-        }
-        else
-        {
-            state = ResultState.PlayerFail;
-            str = "Player Failed";
-            Debug.Log("Player Failed");
-        }
+                // 맘모스와 원시인 그로기 상태 확정되면 그때 추가하기
+                // 클리어 퍼센트에 따른 엔딩 분기 조절
+                if (cntClear >= 100)
+                {
+                    state = ResultState.BossDead;
+                    str = "Boss Dead";
+                    Debug.Log("Boss Dead");
+                } else if (85 <= cntClear && cntClear < 100)
+                {
+                    state = ResultState.BossGroggy;
+                    str = "Boss Groggy";
+                    Debug.Log("Boss Groggy");
+                } else if (50 <= cntClear && cntClear < 85)
+                {
+                    state = ResultState.BossRun;
+                    str = "Boss Run";
+                    Debug.Log("Boss Run");
+                } else if (0 < cntClear && cntClear < 50)
+                {
+                    state = ResultState.PlayerRun;
+                    str = "Player Run";
+                    Debug.Log("Player Run");
+                }
+                else
+                {
+                    state = ResultState.PlayerFail;
+                    str = "Player Failed";
+                    Debug.Log("Player Failed");
+                }
 
-        Debug.Log("Score : " + score);
-        Debug.Log("Clear : " + Math.Round(((score / maxScore) * 100)) + "%");
-        if (score >= maxScore) gameObject.GetComponent<IngameUIManager>().GetGameResult(state, str, score, 
-            (float)Math.Round(((score / maxScore) * 100)), new int[4] {hitCount, dodgeCount, missCount, badCount});
-        else gameObject.GetComponent<IngameUIManager>().GetGameResult(state, str, score, 
-            (float)Math.Round(((score / maxScore) * 100)), new int[4] {hitCount, dodgeCount, missCount, badCount});
+                Debug.Log("Score : " + score);
+                Debug.Log("Clear : " + Math.Round(((score / maxScore) * 100)) + "%");
+                if (score >= maxScore) gameObject.GetComponent<IngameUIManager>().GetGameResult(state, str, score, 
+                    (float)Math.Round(((score / maxScore) * 100)), new int[4] {hitCount, dodgeCount, missCount, badCount});
+                else gameObject.GetComponent<IngameUIManager>().GetGameResult(state, str, score, 
+                    (float)Math.Round(((score / maxScore) * 100)), new int[4] {hitCount, dodgeCount, missCount, badCount});
+                break;
+            case SceneList.MiddleAge :
+                break;
+            case SceneList.ModernAge :
+                break;
+            case SceneList.SciFi :
+                break;
+        }
         StartCoroutine(Timer(endSceneOpenTime));
     }
 

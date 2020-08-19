@@ -17,6 +17,7 @@ public class MenuManger : MonoBehaviour
     public float MinLoadTime = 1.5f;
     public float MaxLoadTime = 2.0f;
     public bool EnableStartTransition = true;
+    public bool MultiResolutionSupport = true;
     
     private string sceneName;
     private bool loadingTrigger = false;

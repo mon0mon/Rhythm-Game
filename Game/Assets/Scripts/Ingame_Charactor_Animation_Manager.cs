@@ -207,7 +207,7 @@ public class Ingame_Charactor_Animation_Manager : MonoBehaviour
                         if (Mammoth != null && Babarian != null)
                         {
                             // 스코어가 0보다 클때는 원시인이 피격당하는 애니메이션 출력
-                            if (GameManager.Instance.score > 30)
+                            if (GameManager.Instance.score > 35.7f)
                             {
                                 Babarian.TriggerDamage();
                                 ScoreBarAnimController.PlayOnChangeScoreBar();

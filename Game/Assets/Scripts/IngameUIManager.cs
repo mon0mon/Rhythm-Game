@@ -56,6 +56,72 @@ public class IngameUIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (ActiveScene == SceneList.NULL)
+        {
+            switch (SceneManager.GetActiveScene().name)
+            {
+                case "Stage_StoneAge" :
+                    Initialize_StoneAge();
+                    ActiveScene = SceneList.StoneAge;
+                    break;
+                case "Stage_MiddleAge" :
+                    Initialize_MiddleAge();
+                    ActiveScene = SceneList.MiddleAge;
+                    break;
+                case "Stage_ModernAge" :
+                    Initialize_ModernAge();
+                    ActiveScene = SceneList.ModernAge;
+                    break;
+                case "Stage_SciFiAge" :
+                    Initialize_SciFiAge();
+                    ActiveScene = SceneList.SciFi;
+                    break;
+                default :
+                    Debug.Log("UIManger : Unexepceted ActiveScene Name");
+                    break;
+            }
+        }
+        
+        if (SceneData.Instance.TextEffect != TextEffectEnable.NULL)
+        {
+            switch (SceneData.Instance.TextEffect)
+            {
+                case TextEffectEnable.Enable :
+                    _toggleTextEffect.isOn = true;
+                    break;
+                case TextEffectEnable.Disenable :
+                    _toggleTextEffect.isOn = false;
+                    break;
+            }
+        }
+
+        hitCount = dodgeCount = missCount = badCount = 0;
+        
+        MultiResolutionUI();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (!isEnd)
+        {
+            if (_ingameMusic.GetPlayTime() <= _progress.maxValue - 0.1f)
+            {
+                _progress.value = _ingameMusic.GetPlayTime();
+            }
+            else
+            {
+                isEnd = true;
+            }
+        }
+        else
+        {
+            _progress.value = _progress.maxValue;
+        }
+    }
+
+    public void Initialize_StoneAge()
+    {
         _saveData = GameObject.Find("SavaData");
         _ingameMusic = GameObject.Find("BGM").GetComponent<IngameMusicManager>();
         _progress = GameObject.Find("ProgressBar").GetComponent<Slider>();
@@ -93,62 +159,140 @@ public class IngameUIManager : MonoBehaviour
         {
             ButtonCheckImage = GameObject.Find("Settings").transform.Find("Check_Image").gameObject;
         }
+    }
+    
+    public void Initialize_MiddleAge()
+    {
+        _saveData = GameObject.Find("SavaData");
+        _ingameMusic = GameObject.Find("BGM").GetComponent<IngameMusicManager>();
+        _progress = GameObject.Find("ProgressBar").GetComponent<Slider>();
+        _blackScreen = GameObject.Find("BlackScreen").GetComponent<Image>();
+        _endScene = GameObject.Find("Ending").transform.Find("EndScene").gameObject;
+        _endSceneLayout = GameObject.Find("Ending").transform.Find("EndScene").Find("Ending_Layout").gameObject;
+        _GM = GameObject.Find("Manager").GetComponent<GameManager>();
+        _configWindow = GameObject.Find("Settings").transform.Find("ConfigWindow").gameObject;
+        _textEffect = gameObject.GetComponent<Ingame_TextEffect_Manager>();
+        _toggleTextEffect = _configWindow.transform.Find("TextEffect_Toggle").gameObject.GetComponent<Toggle>();
+        _BGM = GameObject.Find("BGM").GetComponent<IngameMusicManager>();
+        _SFX = GameObject.Find("SFX").GetComponent<IngameSFXManager>();
+        _MenuSFX = GameObject.Find("MainMenuSFX").GetComponent<SFXManager>();
+        _Score_Indicator = GameObject.Find("Boss_HP_Indicator").GetComponent<Slider>();
 
-        if (SceneData.Instance.TextEffect != TextEffectEnable.NULL)
+        _BGM_Slider = _configWindow.transform.Find("BGM_Slider").GetComponent<Slider>();
+        _SFX_Slider = _configWindow.transform.Find("SFX_Slider").GetComponent<Slider>();
+        
+        _BGM_Slider.value = GameObject.Find("MainMenuMusic").GetComponent<MusicManager>().GetBGMVol();
+        _SFX_Slider.value = GameObject.Find("MainMenuMusic").GetComponent<MusicManager>().GetSFXVol();
+
+        _SongInfo = GameObject.Find("Song_Info").GetComponent<Text>();
+
+        _timeDropDown = _configWindow.transform.Find("Time").gameObject.GetComponent<Dropdown>();
+        _timeDropDown.value = 3;
+
+        _progress.minValue = 0.0f;
+        _progress.maxValue = _ingameMusic.GetAudioLength();
+        
+        _Score_Indicator.maxValue = 200;
+        _Score_Indicator.minValue = 0;
+        _Score_Indicator.value = 100;
+
+        if (_configWindow != null)
         {
-            switch (SceneData.Instance.TextEffect)
-            {
-                case TextEffectEnable.Enable :
-                    _toggleTextEffect.isOn = true;
-                    break;
-                case TextEffectEnable.Disenable :
-                    _toggleTextEffect.isOn = false;
-                    break;
-            }
+            ButtonCheckImage = GameObject.Find("Settings").transform.Find("Check_Image").gameObject;
         }
+    }
+    
+    public void Initialize_ModernAge()
+    {
+        _saveData = GameObject.Find("SavaData");
+        _ingameMusic = GameObject.Find("BGM").GetComponent<IngameMusicManager>();
+        _progress = GameObject.Find("ProgressBar").GetComponent<Slider>();
+        _blackScreen = GameObject.Find("BlackScreen").GetComponent<Image>();
+        _endScene = GameObject.Find("Ending").transform.Find("EndScene").gameObject;
+        _endSceneLayout = GameObject.Find("Ending").transform.Find("EndScene").Find("Ending_Layout").gameObject;
+        _GM = GameObject.Find("Manager").GetComponent<GameManager>();
+        _configWindow = GameObject.Find("Settings").transform.Find("ConfigWindow").gameObject;
+        _textEffect = gameObject.GetComponent<Ingame_TextEffect_Manager>();
+        _toggleTextEffect = _configWindow.transform.Find("TextEffect_Toggle").gameObject.GetComponent<Toggle>();
+        _BGM = GameObject.Find("BGM").GetComponent<IngameMusicManager>();
+        _SFX = GameObject.Find("SFX").GetComponent<IngameSFXManager>();
+        _MenuSFX = GameObject.Find("MainMenuSFX").GetComponent<SFXManager>();
+        _Score_Indicator = GameObject.Find("Boss_HP_Indicator").GetComponent<Slider>();
 
-        hitCount = dodgeCount = missCount = badCount = 0;
+        _BGM_Slider = _configWindow.transform.Find("BGM_Slider").GetComponent<Slider>();
+        _SFX_Slider = _configWindow.transform.Find("SFX_Slider").GetComponent<Slider>();
+        
+        _BGM_Slider.value = GameObject.Find("MainMenuMusic").GetComponent<MusicManager>().GetBGMVol();
+        _SFX_Slider.value = GameObject.Find("MainMenuMusic").GetComponent<MusicManager>().GetSFXVol();
 
-        if (ActiveScene == SceneList.NULL)
+        _SongInfo = GameObject.Find("Song_Info").GetComponent<Text>();
+
+        _timeDropDown = _configWindow.transform.Find("Time").gameObject.GetComponent<Dropdown>();
+        _timeDropDown.value = 3;
+
+        _progress.minValue = 0.0f;
+        _progress.maxValue = _ingameMusic.GetAudioLength();
+        
+        _Score_Indicator.maxValue = 200;
+        _Score_Indicator.minValue = 0;
+        _Score_Indicator.value = 100;
+
+        if (_configWindow != null)
         {
-            switch (SceneManager.GetActiveScene().name)
-            {
-                case "Stage_StoneAge" :
-                    ActiveScene = SceneList.StoneAge;
-                    break;
-                case "Stage_MiddleAge" :
-                    ActiveScene = SceneList.MiddleAge;
-                    break;
-                case "Stage_ModernAge" :
-                    ActiveScene = SceneList.ModernAge;
-                    break;
-                case "Stage_SciFiAge" :
-                    ActiveScene = SceneList.SciFi;
-                    break;
-                default :
-                    Debug.Log("UIManger : Unexepceted ActiveScene Name");
-                    break;
-            }
+            ButtonCheckImage = GameObject.Find("Settings").transform.Find("Check_Image").gameObject;
+        }
+    }
+    
+    public void Initialize_SciFiAge()
+    {
+        _saveData = GameObject.Find("SavaData");
+        _ingameMusic = GameObject.Find("BGM").GetComponent<IngameMusicManager>();
+        _progress = GameObject.Find("ProgressBar").GetComponent<Slider>();
+        _blackScreen = GameObject.Find("BlackScreen").GetComponent<Image>();
+        _endScene = GameObject.Find("Ending").transform.Find("EndScene").gameObject;
+        _endSceneLayout = GameObject.Find("Ending").transform.Find("EndScene").Find("Ending_Layout").gameObject;
+        _GM = GameObject.Find("Manager").GetComponent<GameManager>();
+        _configWindow = GameObject.Find("Settings").transform.Find("ConfigWindow").gameObject;
+        _textEffect = gameObject.GetComponent<Ingame_TextEffect_Manager>();
+        _toggleTextEffect = _configWindow.transform.Find("TextEffect_Toggle").gameObject.GetComponent<Toggle>();
+        _BGM = GameObject.Find("BGM").GetComponent<IngameMusicManager>();
+        _SFX = GameObject.Find("SFX").GetComponent<IngameSFXManager>();
+        _MenuSFX = GameObject.Find("MainMenuSFX").GetComponent<SFXManager>();
+        _Score_Indicator = GameObject.Find("Boss_HP_Indicator").GetComponent<Slider>();
+
+        _BGM_Slider = _configWindow.transform.Find("BGM_Slider").GetComponent<Slider>();
+        _SFX_Slider = _configWindow.transform.Find("SFX_Slider").GetComponent<Slider>();
+        
+        _BGM_Slider.value = GameObject.Find("MainMenuMusic").GetComponent<MusicManager>().GetBGMVol();
+        _SFX_Slider.value = GameObject.Find("MainMenuMusic").GetComponent<MusicManager>().GetSFXVol();
+
+        _SongInfo = GameObject.Find("Song_Info").GetComponent<Text>();
+
+        _timeDropDown = _configWindow.transform.Find("Time").gameObject.GetComponent<Dropdown>();
+        _timeDropDown.value = 3;
+
+        _progress.minValue = 0.0f;
+        _progress.maxValue = _ingameMusic.GetAudioLength();
+        
+        _Score_Indicator.maxValue = 200;
+        _Score_Indicator.minValue = 0;
+        _Score_Indicator.value = 100;
+
+        if (_configWindow != null)
+        {
+            ButtonCheckImage = GameObject.Find("Settings").transform.Find("Check_Image").gameObject;
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void MultiResolutionUI()
     {
-        if (!isEnd)
+        if (Mathf.Approximately(Camera.main.aspect, 1.777777f))
         {
-            if (_ingameMusic.GetPlayTime() <= _progress.maxValue - 0.1f)
-            {
-                _progress.value = _ingameMusic.GetPlayTime();
-            }
-            else
-            {
-                isEnd = true;
-            }
-        }
-        else
+            _endScene.transform.Find("Restart").transform.localPosition = new Vector3(700f, -440f, 0);
+        } else if (Mathf.Approximately(Camera.main.aspect, 1.6f))
         {
-            _progress.value = _progress.maxValue;
+            _endScene.transform.Find("Restart").transform.localPosition = new Vector3(635f, -440f, 0);
+            _endScene.transform.Find("ToMainMenu").transform.localPosition = new Vector3(374, -440f, 0);
         }
     }
 
@@ -157,8 +301,11 @@ public class IngameUIManager : MonoBehaviour
         string temp = null;
         _blackScreen.enabled = true;
         _endScene.SetActive(true);
-
-        if (Mathf.Approximately(Camera.main.aspect, 2.111111f))
+        if (Mathf.Approximately(Camera.main.aspect, 2.388888f))
+        {
+            _endScene.transform.Find("Text").GetComponent<RectTransform>().offsetMin = new Vector2(125f, 384f);
+            _endScene.transform.Find("Text").GetComponent<RectTransform>().offsetMax = new Vector2(-1477f, -44f);
+        } else if (Mathf.Approximately(Camera.main.aspect, 2.111111f))
         {
         } else if (Mathf.Approximately(Camera.main.aspect, 1.777777f))
         {
@@ -166,8 +313,8 @@ public class IngameUIManager : MonoBehaviour
             _endScene.transform.Find("Text").GetComponent<RectTransform>().offsetMax = new Vector2(-1359f, -44f);
         } else if (Mathf.Approximately(Camera.main.aspect, 1.6f))
         {
-            _endScene.transform.Find("Text").GetComponent<RectTransform>().offsetMin = new Vector2(223f, 366f);
-            _endScene.transform.Find("Text").GetComponent<RectTransform>().offsetMax = new Vector2(-1379f, -62f);
+            _endScene.transform.Find("Text").GetComponent<RectTransform>().offsetMin = new Vector2(198f, 378f);
+            _endScene.transform.Find("Text").GetComponent<RectTransform>().offsetMax = new Vector2(-1210f, -50f);
         }
 
         switch (ActiveScene)
@@ -332,10 +479,12 @@ public class IngameUIManager : MonoBehaviour
                     ButtonCheckImage.transform.localPosition = new Vector3(tf.localPosition.x, -440f, tf.localPosition.z);
                 } else if (Mathf.Approximately(Camera.main.aspect, 1.777777f))
                 {
-                    ButtonCheckImage.transform.localPosition = new Vector3(708f, -440f, tf.localPosition.z);
+                    ButtonCheckImage.transform.localPosition = new Vector3(700f, -440f, tf.localPosition.z);
+                    _endScene.transform.Find("Restart").transform.localPosition = new Vector3(700f, -440f, tf.localPosition.z);
                 } else if (Mathf.Approximately(Camera.main.aspect, 1.6f))
                 {
-                    ButtonCheckImage.transform.localPosition = new Vector3(708f, -488f, tf.localPosition.z);
+                    ButtonCheckImage.transform.localPosition = new Vector3(635f, -440f, tf.localPosition.z);
+                    _endScene.transform.Find("Restart").transform.localPosition = new Vector3(635f, -440f, tf.localPosition.z);
                 }
                 ButtonCheckImage.SetActive(true);
                 _MenuSFX.PlayButtonClickSFX();
@@ -375,7 +524,8 @@ public class IngameUIManager : MonoBehaviour
                     ButtonCheckImage.transform.localPosition = new Vector3(374, -440f, tf.localPosition.z);
                 } else if (Mathf.Approximately(Camera.main.aspect, 1.6f))
                 {
-                    ButtonCheckImage.transform.localPosition = new Vector3(374, -488f, tf.localPosition.z);
+                    ButtonCheckImage.transform.localPosition = new Vector3(374, -440f, tf.localPosition.z);
+                    _endScene.transform.Find("ToMainMenu").transform.localPosition = new Vector3(374, -440f, tf.localPosition.z);
                 }
                 ButtonCheckImage.SetActive(true);
                 _MenuSFX.PlayButtonClickSFX();
