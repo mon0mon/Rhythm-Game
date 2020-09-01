@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
 
 public class NoteObject : MonoBehaviour
@@ -153,19 +154,44 @@ public class NoteObject : MonoBehaviour
         } else if (other.CompareTag("Trigger"))
         {
             // 원시인 공격 준비 동작 및 맘모스 공격 준비 동작
-            switch (other.name)
+            switch (SceneManager.GetActiveScene().name)
             {
-                case "Trigger_Tap" :
-                    _GM.GetComponent<Ingame_Charactor_Animation_Manager>().Actor_Player.SetAttackReady();
-                    _player_Warnning_Controller.PlayInitAnim();
-                    _SFXManager.PlayStoneAgeSFX(StoneAge_SFX.Babarian_Aim);
+                case "Stage_StoneAge" :
+                    switch (other.name)
+                    {
+                        case "Trigger_Tap" :
+                            _GM.GetComponent<Ingame_Charactor_Animation_Manager>().Actor_Player.SetAttackReady();
+                            _player_Warnning_Controller.PlayInitAnim();
+                            _SFXManager.PlayStoneAgeSFX(StoneAge_SFX.Babarian_Aim);
+                            break;
+                        case "Trigger_Swipe" :
+                            _GM.GetComponent<Ingame_Charactor_Animation_Manager>().Actor_NonPlayer.SetAttackReady();
+                            _npc_Warnning_Controller.OnEnableSign();
+                            break;
+                        default :
+                            Debug.LogWarning("NoteObject - OnTriggerEnter2D - Trigger Handling : Uncategorized Exception");
+                            break;
+                    }
                     break;
-                case "Trigger_Swipe" :
-                    _GM.GetComponent<Ingame_Charactor_Animation_Manager>().Actor_NonPlayer.SetAttackReady();
-                    _npc_Warnning_Controller.OnEnableSign();
+                case "Stage_MiddleAge" :
                     break;
-                default :
-                    Debug.LogWarning("NoteObject - OnTriggerEnter2D - Trigger Handling : Uncategorized Exception");
+                case "Stage_ModernAge" :
+                    break;
+                case "Stage_SciFi" :
+                    switch (other.name)
+                    {
+                        case "Trigger_Tap" :
+                            _GM.GetComponent<Ingame_Charactor_Animation_Manager>().Actor_Player.SetAttackReady();
+                            _player_Warnning_Controller.PlayInitAnim();
+                            break;
+                        case "Trigger_Swipe" :
+                            _GM.GetComponent<Ingame_Charactor_Animation_Manager>().Actor_NonPlayer.SetAttackReady();
+                            _npc_Warnning_Controller.OnEnableSign();
+                            break;
+                        default :
+                            Debug.LogWarning("NoteObject - OnTriggerEnter2D - Trigger Handling : Uncategorized Exception");
+                            break;
+                    }
                     break;
             }
         } 
@@ -217,17 +243,28 @@ public class NoteObject : MonoBehaviour
             GameManager.Instance.SetPressedButton(null);
         } else if (other.CompareTag("Trigger"))
         {
-            switch (other.name)
+            switch (SceneManager.GetActiveScene().name)
             {
-                case "Trigger_Tap" :
-                    // _player_Warnning_Controller.OnEnableSign();
+                case "Stage_StoneAge" :
+                    switch (other.name)
+                    {
+                        case "Trigger_Tap" :
+                            // _player_Warnning_Controller.OnEnableSign();
+                            break;
+                        case "Trigger_Swipe" :
+                            _GM.GetComponent<Ingame_Charactor_Animation_Manager>().Actor_NonPlayer.SetDefault();
+                            _GM.GetComponent<Ingame_Charactor_Animation_Manager>().Actor_NonPlayer.TriggerAttack();
+                            break;
+                        default :
+                            Debug.LogWarning("NoteObject - OnTriggerEnter2D - Trigger Handling : Uncategorized Exception");
+                            break;
+                    }
                     break;
-                case "Trigger_Swipe" :
-                    _GM.GetComponent<Ingame_Charactor_Animation_Manager>().Actor_NonPlayer.SetDefault();
-                    _GM.GetComponent<Ingame_Charactor_Animation_Manager>().Actor_NonPlayer.TriggerAttack();
+                case "Stage_MiddleAge" :
                     break;
-                default :
-                    Debug.LogWarning("NoteObject - OnTriggerEnter2D - Trigger Handling : Uncategorized Exception");
+                case "Stage_ModernAge" :
+                    break;
+                case "Stage_SciFi" :
                     break;
             }
         } else if (other.CompareTag("Dectect_Exploit_Input"))
