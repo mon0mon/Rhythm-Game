@@ -37,7 +37,7 @@ public class IngameMusicManager : MonoBehaviour
                 Clip = Modern_Age;
                 _songInfo = "SongName - Artist";
                 break;
-            case "Stage_SciFiAge" :
+            case "Stage_SciFi" :
                 Clip = SciFi_Age;
                 _songInfo = "뿅뿅뿅울렐레레렐 - SellBuyMusic";
                 break;

@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Stage_StoneAge.unity
     guid: 7449c1e37ab513a40ba0b0a83af51611
+  - enabled: 1
+    path: Assets/Scenes/Stage_StoneAge_Tutorial.unity
+    guid: 0683647e3b2906f46afba743b4e637b0
   m_configObjects: {}

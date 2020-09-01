@@ -45,6 +45,8 @@ public class MenuButtonList : MonoBehaviour
     {
         // 게임 플레이 스테이지
         StoneAge, MiddleAge, ModernAge, SciFi,
+        // 튜토리얼 포함 게임 플레이 스테이지
+        StoneAge_Tuto, MiddleAge_Tuto, ModernAge_Tuto, SciFi_Tuto,
         // 예외처리
         NULL
     }
@@ -145,8 +147,16 @@ public class MenuButtonList : MonoBehaviour
         if (StoneAge_Enable)
         {
             _gameStart.interactable = true;
-            _menuManger.NextScene = MenuManger.SceneList.StoneAge;
-            SelectedScene = SceneList.StoneAge;
+            if (SceneData.Instance.GetTutorialState())
+            {
+                _menuManger.NextScene = MenuManger.SceneList.StoneAge_Tuto;
+                SelectedScene = SceneList.StoneAge_Tuto;
+            }
+            else
+            {
+                _menuManger.NextScene = MenuManger.SceneList.StoneAge;
+                SelectedScene = SceneList.StoneAge;
+            }
             ChangeButtonSprite();
             _MenuSFX.PlayButtonClickSFX();
             GameObject.Find("Game_Start").GetComponent<Button>().interactable = true;
@@ -158,8 +168,16 @@ public class MenuButtonList : MonoBehaviour
         if (MiddleAge_Enable)
         {
             _gameStart.interactable = true;
-            _menuManger.NextScene = MenuManger.SceneList.MiddleAge;
-            SelectedScene = SceneList.MiddleAge;
+            if (SceneData.Instance.GetTutorialState())
+            {
+                _menuManger.NextScene = MenuManger.SceneList.MiddleAge_Tuto;
+                SelectedScene = SceneList.MiddleAge_Tuto;
+            }
+            else
+            {
+                _menuManger.NextScene = MenuManger.SceneList.MiddleAge;
+                SelectedScene = SceneList.MiddleAge;
+            }
             ChangeButtonSprite();
             _MenuSFX.PlayButtonClickSFX();
             GameObject.Find("Game_Start").GetComponent<Button>().interactable = true;
@@ -171,8 +189,16 @@ public class MenuButtonList : MonoBehaviour
         if (ModernAge_Enable)
         {
             _gameStart.interactable = true;
-            _menuManger.NextScene = MenuManger.SceneList.ModernAge;
-            SelectedScene = SceneList.ModernAge;
+            if (SceneData.Instance.GetTutorialState())
+            {
+                _menuManger.NextScene = MenuManger.SceneList.ModernAge_Tuto;
+                SelectedScene = SceneList.ModernAge_Tuto;
+            }
+            else
+            {
+                _menuManger.NextScene = MenuManger.SceneList.ModernAge;
+                SelectedScene = SceneList.ModernAge;
+            }
             ChangeButtonSprite();
             _MenuSFX.PlayButtonClickSFX();
             GameObject.Find("Game_Start").GetComponent<Button>().interactable = true;
@@ -184,8 +210,16 @@ public class MenuButtonList : MonoBehaviour
         if (SciFi_Enable)
         {
             _gameStart.interactable = true;
-            _menuManger.NextScene = MenuManger.SceneList.SciFi;
-            SelectedScene = SceneList.SciFi;
+            if (SceneData.Instance.GetTutorialState())
+            {
+                _menuManger.NextScene = MenuManger.SceneList.SciFi_Tuto;
+                SelectedScene = SceneList.SciFi_Tuto;
+            }
+            else
+            {
+                _menuManger.NextScene = MenuManger.SceneList.SciFi;
+                SelectedScene = SceneList.SciFi;
+            }
             ChangeButtonSprite();
             _MenuSFX.PlayButtonClickSFX();
             GameObject.Find("Game_Start").GetComponent<Button>().interactable = true;
@@ -233,6 +267,7 @@ public class MenuButtonList : MonoBehaviour
             GameObject.Find("Config_Window").transform.GetChild(0).gameObject.SetActive(true);
             GameObject.Find("Background_Animation_Toggle").GetComponent<Toggle>().isOn = GameObject.Find("SaveData")
                 .transform.GetComponentInChildren<AnimationManager>().isMenuAnimationOn;
+            GameObject.Find("Tutorial_Toggle").GetComponent<Toggle>().isOn = SceneData.Instance.GetTutorialState();
             if (!init_check)
             {
                 GameObject.Find("BGM_Slider").GetComponent<Slider>().value = SceneData.Instance.LoadBGMVol();
@@ -328,24 +363,33 @@ public class MenuButtonList : MonoBehaviour
         _menuManger.MenuAnimation(GameObject.Find("Background_Animation_Toggle").GetComponent<Toggle>().isOn);
     }
 
+    public void OnToggle_Tutorial()
+    {
+        _menuManger.MenuTutorial(GameObject.Find("Tutorial_Toggle").GetComponent<Toggle>().isOn);
+    }
+
     private void ChangeButtonSprite()
     {
         ResetButtonSprite();
         _background.color = Color.gray;
         switch (SelectedScene)
         {
+            case SceneList.StoneAge_Tuto :
             case SceneList.StoneAge :
                 GameObject.Find("Stone_Age").GetComponent<Image>().sprite
                     = Highlight_Barbarian;
                 break;
+            case SceneList.MiddleAge_Tuto :
             case SceneList.MiddleAge :
                 GameObject.Find("Middle_Age").GetComponent<Image>().sprite
                     = Highlight_Knight;
                 break;
+            case SceneList.ModernAge_Tuto :
             case SceneList.ModernAge :
                 GameObject.Find("Modern_Age").GetComponent<Image>().sprite
                     = Highlight_Worker;
                 break;
+            case SceneList.SciFi_Tuto :
             case SceneList.SciFi :
                 GameObject.Find("Sci-Fi_Age").GetComponent<Image>().sprite
                     = Highlight_Spaceship;

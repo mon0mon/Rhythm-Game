@@ -72,8 +72,8 @@ public class IngameUIManager : MonoBehaviour
                     Initialize_ModernAge();
                     ActiveScene = SceneList.ModernAge;
                     break;
-                case "Stage_SciFiAge" :
-                    Initialize_SciFiAge();
+                case "Stage_SciFi" :
+                    Initialize_SciFi();
                     ActiveScene = SceneList.SciFi;
                     break;
                 default :
@@ -243,7 +243,7 @@ public class IngameUIManager : MonoBehaviour
         }
     }
     
-    public void Initialize_SciFiAge()
+    public void Initialize_SciFi()
     {
         _saveData = GameObject.Find("SavaData");
         _ingameMusic = GameObject.Find("BGM").GetComponent<IngameMusicManager>();

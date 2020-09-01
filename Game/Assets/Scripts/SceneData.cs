@@ -13,7 +13,8 @@ public class SceneData : MonoBehaviour
     
     private int cnt = 0;
     private bool[] checkList;
-    private bool isAnimationOn;
+    public bool isAnimationOn = true;
+    public bool isTutorialOn = true;
 
     private float BGM_Vol = -15;
     private float SFX_Vol = -15;
@@ -122,6 +123,16 @@ public class SceneData : MonoBehaviour
     public bool GetMenuAnimationState()
     {
         return isAnimationOn;
+    }
+
+    public void SetTutorialState(bool check)
+    {
+        isTutorialOn = check;
+    }
+
+    public bool GetTutorialState()
+    {
+        return isTutorialOn;
     }
 
     public void SaveBGMVol(float value)

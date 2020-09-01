@@ -64,6 +64,8 @@ public class MenuManger : MonoBehaviour
         RhythmGame_Test_PC, TouchSwipe_Test_Mobile, Touch_Test, 
         // 게임 플레이 스테이지
         StoneAge, MiddleAge, ModernAge, SciFi,
+        // 튜토리얼 포함 게임 플레이 스테이지
+        StoneAge_Tuto, MiddleAge_Tuto, ModernAge_Tuto, SciFi_Tuto,
         // 메뉴 화면 씬
         Main_Scene, Start_Scene,LoadingScene,
         // 예외처리
@@ -100,6 +102,11 @@ public class MenuManger : MonoBehaviour
     {
         SceneData.Instance.SetMenuAnimationState(check);
     }
+    
+    public void MenuTutorial(bool check)
+    {
+        SceneData.Instance.SetTutorialState(check);
+    }
 
     private void SelecteScene()
     {
@@ -131,7 +138,17 @@ public class MenuManger : MonoBehaviour
                 break;
             case SceneList.MiddleAge :
             case SceneList.ModernAge :
+                sceneName = "Scenes/Start_Scene";
+                break;
             case SceneList.SciFi :
+                sceneName = "Scenes/Stage_SciFi";
+                break;
+            case SceneList.StoneAge_Tuto :
+                sceneName = "Scenes/Stage_StoneAge_Tutorial";
+                break;
+            case SceneList.MiddleAge_Tuto :
+            case SceneList.ModernAge_Tuto :
+            case SceneList.SciFi_Tuto :
             default:
                 sceneName = "Scenes/Start_Scene";
                 break;

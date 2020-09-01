@@ -1898,7 +1898,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 012d6418d5426784694ff78819bb57db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NextScene: 7
+  NextScene: 11
   EnableLoadingScreen: 0
   MinLoadTime: 1.5
   MaxLoadTime: 2

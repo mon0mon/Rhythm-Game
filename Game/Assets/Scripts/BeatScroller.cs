@@ -7,8 +7,7 @@ public class BeatScroller : MonoBehaviour
 {
     public float beatTempo;
 
-    private bool hasStarted;
-    private bool hasStoped = false;
+    private bool Enable = true;
 
     void Start()
     {
@@ -17,20 +16,19 @@ public class BeatScroller : MonoBehaviour
     
     private void Update()
     {
-        if (hasStarted && hasStoped) { } 
-        else if (hasStarted && !hasStoped)
+        if (Enable)
         {
             transform.position -= new Vector3(0f, beatTempo * Time.deltaTime, 0f);
         }
     }
 
-    public void SetStart(bool check)
+    public void SetEnable(bool check)
     {
-        hasStarted = check;
+        Enable = check;
     }
 
-    public void SetStop(bool check)
+    public bool GetEnable()
     {
-        hasStoped = check;
+        return Enable;
     }
 }

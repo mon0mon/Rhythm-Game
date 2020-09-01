@@ -26,6 +26,7 @@
     </explicitIncludes>
     <explicitExcludes>
       <Path>.idea</Path>
+      <Path>APK</Path>
       <Path>Library</Path>
       <Path>Logs</Path>
       <Path>Rhythm-Game-Test</Path>

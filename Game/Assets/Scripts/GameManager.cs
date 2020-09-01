@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviour
                 case "Stage_ModernAge":
                     Stage = SceneList.ModernAge;
                     break;
-                case "Stage_SciFiAge":
+                case "Stage_SciFi":
                     Stage = SceneList.SciFi;
                     break;
                 default:
@@ -127,7 +127,7 @@ public class GameManager : MonoBehaviour
         if (!startPlaying && !isSceneChange)
         {
             startPlaying = true;
-            _beatScroller.SetStart(true);
+            _beatScroller.SetEnable(true);
             // 음악 메소드인 IngameMusicManager 호출로 변경
             _ingameMusic.PlayBGM();
         }
@@ -146,7 +146,7 @@ public class GameManager : MonoBehaviour
                 {
                     CheckHitNotes();
                     _ingameMusic.StopBGM();
-                    GameObject.Find("NoteHolder").GetComponent<BeatScroller>().SetStop(true);
+                    GameObject.Find("NoteHolder").GetComponent<BeatScroller>().SetEnable(false);
                     gameEndTrigger = true;
                 }
                 break;
