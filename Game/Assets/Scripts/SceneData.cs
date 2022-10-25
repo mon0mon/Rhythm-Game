@@ -14,7 +14,8 @@ public class SceneData : MonoBehaviour
     private int cnt = 0;
     private bool[] checkList;
     public bool isAnimationOn = true;
-    public bool isTutorialOn = true;
+    // public bool isTutorialOn = true;
+    public bool isTutorialOn = false;
 
     private float BGM_Vol = -15;
     private float SFX_Vol = -15;
